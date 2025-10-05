@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" data-color-scheme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weapon Vision AI - Security Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="brand">
+          <div class="brand-icon">🛡️</div>
+          <h1>Weapon Vision AI</h1>
+        </div>
+        <div class="header-controls">
+          <button class="btn btn--outline btn--sm" id="exportBtn">📊 Export Data</button>
+          <button class="btn btn--outline btn--sm" id="settingsBtn">⚙️ Settings</button>
+          <div class="status-indicator">
+            <div class="status-light online" id="statusLight"></div>
+            <span id="statusText">System Online</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Alert Banner -->
+    <div class="alert-banner hidden" id="alertBanner" role="alert" aria-live="assertive">
+      <div class="alert-content">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-text">
+          <strong>WEAPON DETECTED!</strong>
+          <span id="alertTimestamp"></span>
+        </div>
+        <button class="alert-dismiss" id="dismissAlert" aria-label="Dismiss alert">×</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-info">
+            <span class="stat-value" id="detectionsToday">12</span>
+            <span class="stat-label">Detections Today</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📹</div>
+          <div class="stat-info">
+            <span class="stat-value" id="activeCameras">3</span>
+            <span class="stat-label">Active Cameras</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-info">
+            <span class="stat-value" id="systemUptime">99.7%</span>
+            <span class="stat-label">System Uptime</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💾</div>
+          <div class="stat-info">
+            <span class="stat-value" id="storageUsed">2.3MB</span>
+            <span class="stat-label">Storage Used</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="tab-navigation">
+        <button class="tab-btn active" data-tab="live">📹 Live Detection</button>
+        <button class="tab-btn" data-tab="upload">📁 Upload & Analyze</button>
+      </div>
+
+      <!-- Live Detection Tab -->
+      <div class="tab-content active" id="live-tab">
+        <div class="video-section">
+          <div class="video-container" style="position: relative; width: 100%; max-width: 720px;">
+            <video
+              id="videoElement"
+              class="video-element"
+              muted
+              autoplay
+              playsinline
+              style="width: 100%; height: auto; background-color: #000;"
+            ></video>
+            <div id="videoOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+            <div id="boundingBox" class="bounding-box hidden" style="position: absolute;"></div>
+          </div>
+          <div class="video-controls" style="margin-top: 10px;">
+            <button id="startDetection" class="btn btn--primary" style="display:inline-block;">
+              <span>▶</span> Start Detection
+            </button>
+            <button id="stopDetection" class="btn btn--secondary" style="display:none;">
+              <span>⏸</span> Stop Detection
+            </button>
+            <div id="detectionStatus" class="detection-status">
+              <div class="status-indicator inactive">●</div>
+              <span>Detection Inactive</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload & Analyze Tab -->
+      <div class="tab-content" id="upload-tab">
+        <div class="upload-section">
+          <div class="upload-container">
+            <div id="uploadArea" class="upload-area" tabindex="0" aria-label="Drag and drop files here or click to browse">
+              <div class="upload-content">
+                <div class="upload-icon">📁</div>
+                <h3>Upload Files for Analysis</h3>
+                <p>Drop images or videos here, or click to browse</p>
+                <div class="supported-formats">
+                  <span>Images: PNG, JPG, JPEG</span> •
+                  <span>Videos: MP4, AVI, MOV, WEBM</span>
+                </div>
+                <input type="file" id="fileInput" multiple accept="image/*,video/*" hidden />
+                <button id="browseBtn" class="btn btn--primary">Browse Files</button>
+              </div>
+            </div>
+
+            <!-- File Queue -->
+            <div id="fileQueue" class="file-queue hidden">
+              <h4>Upload Queue</h4>
+              <div id="queueList" class="queue-list"></div>
+              <div class="queue-controls">
+                <button id="processFiles" class="btn btn--primary">🔍 Analyze Files</button>
+                <button id="clearQueue" class="btn btn--outline">Clear Queue</button>
+              </div>
+            </div>
+
+            <!-- Analysis Progress -->
+            <div id="analysisProgress" class="analysis-progress hidden">
+              <div class="progress-header">
+                <h4>Analysis in Progress</h4>
+                <span id="progressText">0/0 files processed</span>
+              </div>
+              <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+              </div>
+              <div id="currentFile" class="current-file">Ready to start...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detection Log Section -->
+      <div class="log-section">
+        <div class="section-header">
+          <h2>Detection Log</h2>
+          <div class="log-controls">
+            <select id="sourceFilter" class="form-control" aria-label="Filter by source">
+              <option value="all">All Sources</option>
+              <option value="Live">Live Camera</option>
+              <option value="Image">Images</option>
+              <option value="Video">Videos</option>
+            </select>
+            <select id="sortBy" class="form-control" aria-label="Sort by">
+              <option value="timestamp">Sort by Date</option>
+              <option value="confidence">Sort by Confidence</option>
+              <option value="weaponType">Sort by Type</option>
+            </select>
+            <span class="log-stats">Last Update: <span id="lastUpdate">14:30:00</span></span>
+          </div>
+        </div>
+        <div class="table-container">
+          <table id="detectionTable" class="detection-table" aria-label="Detection Logs Table">
+            <thead>
+              <tr>
+                <th>Preview</th>
+                <th>Timestamp</th>
+                <th>Source</th>
+                <th>Weapon Type</th>
+                <th>Confidence</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="detectionTableBody"></tbody>
+          </table>
+        </div>
+        <div id="pagination" class="pagination">
+          <button id="prevPage" class="btn btn--outline btn--sm" disabled>← Previous</button>
+          <span id="pageInfo" class="page-info">Page 1 of 1</span>
+          <button id="nextPage" class="btn btn--outline btn--sm" disabled>Next →</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal hidden" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="settingsModalTitle">Settings</h3>
+        <button id="closeModal" class="modal-close" aria-label="Close settings modal">×</button>
+      </div>
+      <div class="modal-body">
+        <section class="settings-section">
+          <h4>Detection Settings</h4>
+          <div class="form-group">
+            <label for="confidenceThreshold" class="form-label">Confidence Threshold</label>
+            <input type="range" id="confidenceThreshold" min="0.5" max="1" step="0.05" value="0.8" class="form-control" />
+            <span id="confidenceValue">80%</span>
+          </div>
+          <div class="form-group">
+            <label for="autoDismiss" class="form-label">Auto-dismiss Alerts</label>
+            <select id="autoDismiss" class="form-control">
+              <option value="5">5 seconds</option>
+              <option value="8" selected>8 seconds</option>
+              <option value="15">15 seconds</option>
+              <option value="0">Never</option>
+            </select>
+          </div>
+        </section>
+        <section class="settings-section">
+          <h4>Data Management</h4>
+          <div class="form-group">
+            <label class="form-label">Storage Information</label>
+            <p class="text-sm">Detection results are stored in browser memory during this session.</p>
+            <button id="clearAllData" class="btn btn--outline btn--full-width">Clear All Detection Data</button>
+          </div>
+        </section>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelSettings" class="btn btn--outline">Cancel</button>
+        <button id="saveSettings" class="btn btn--primary">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
