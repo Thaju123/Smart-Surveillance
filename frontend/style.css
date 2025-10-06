@@ -1730,3 +1730,108 @@ input[type="range"]::-moz-range-thumb {
   width: 100% !important;
   height: auto !important;
 }
+/* ... (existing CSS code) ... */
+
+/* Video Section */
+.video-section {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+}
+
+.video-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.video-element {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  background-color: var(--color-video-bg);
+  border: 2px solid var(--color-video-border);
+  border-radius: var(--radius-base);
+}
+
+/* NEW: Placeholder styles */
+.video-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-video-bg);
+  border: 2px dashed var(--color-gray-400);
+  border-radius: var(--radius-base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 10;
+}
+
+.video-placeholder.active {
+    display: flex; /* Ensure it's shown on init */
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-16);
+  opacity: 0.5;
+  color: var(--color-text-secondary);
+}
+
+.video-placeholder p {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-8);
+}
+
+.video-placeholder small {
+  font-size: var(--font-size-sm);
+}
+
+/* Bounding Box and Label Styles */
+.bounding-box {
+  position: absolute;
+  border: 3px solid var(--color-danger); /* Default to danger color */
+  background-color: rgba(var(--color-red-400-rgb), 0.1);
+  border-radius: var(--radius-sm);
+  animation: detectPulse 1s infinite;
+  box-sizing: border-box; /* Crucial for size calculations */
+}
+
+.bounding-box.hidden {
+  display: none;
+}
+
+/* NEW: Bounding Box Label */
+.bounding-box .box-label {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    transform: translateY(-100%); /* Position label above the box */
+    padding: 2px 8px;
+    background-color: var(--color-danger);
+    color: var(--color-btn-primary-text);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    white-space: nowrap;
+    z-index: 20;
+}
+
+/* Update colors for bounding box based on confidence (if lower than threshold) */
+.bounding-box[style*="warning"] {
+    border-color: var(--color-warning) !important;
+    background-color: rgba(var(--color-orange-400-rgb), 0.1) !important;
+}
+
+.bounding-box[style*="warning"] .box-label {
+    background-color: var(--color-warning) !important;
+}
+
+/* ... (rest of CSS remains the same) ... */

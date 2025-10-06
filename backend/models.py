@@ -10,7 +10,7 @@ class Detection(db.Model):
     timestamp = db.Column(db.DateTime(), default=datetime.utcnow)
     weapon_type = db.Column(db.String(80), nullable=False)
     confidence = db.Column(db.Float, nullable=False)
-    source = db.Column(db.String(20), nullable=False)  # 'image' or 'video' or 'live'
+    source = db.Column(db.String(20), nullable=False)  # 'Image', 'Video', or 'Live'
     file_path = db.Column(db.String(255))
     thumbnail_path = db.Column(db.String(255))
     status = db.Column(db.String(80), default="Verified")

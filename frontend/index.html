@@ -8,7 +8,6 @@
 </head>
 <body>
   <div class="dashboard">
-    <!-- Header -->
     <header class="header">
       <div class="header-content">
         <div class="brand">
@@ -26,7 +25,6 @@
       </div>
     </header>
 
-    <!-- Alert Banner -->
     <div class="alert-banner hidden" id="alertBanner" role="alert" aria-live="assertive">
       <div class="alert-content">
         <div class="alert-icon">⚠️</div>
@@ -38,9 +36,7 @@
       </div>
     </div>
 
-    <!-- Main Content -->
     <main class="main-content">
-      <!-- Statistics Cards -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">🎯</div>
@@ -72,26 +68,34 @@
         </div>
       </div>
 
-      <!-- Tabs Navigation -->
       <div class="tab-navigation">
         <button class="tab-btn active" data-tab="live">📹 Live Detection</button>
         <button class="tab-btn" data-tab="upload">📁 Upload & Analyze</button>
       </div>
 
-      <!-- Live Detection Tab -->
       <div class="tab-content active" id="live-tab">
         <div class="video-section">
           <div class="video-container" style="position: relative; width: 100%; max-width: 720px;">
+            
+            <div id="videoPlaceholder" class="video-placeholder active">
+              <div class="placeholder-icon">🎥</div>
+              <p>Live Camera Feed Inactive</p>
+              <small>Press 'Start Detection' to begin monitoring.</small>
+            </div>
+
             <video
               id="videoElement"
               class="video-element"
               muted
               autoplay
               playsinline
-              style="width: 100%; height: auto; background-color: #000;"
+              style="width: 100%; height: auto; background-color: #000; display: none;" 
             ></video>
-            <div id="videoOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
-            <div id="boundingBox" class="bounding-box hidden" style="position: absolute;"></div>
+            
+            <div id="videoOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+              <div id="boundingBox" class="bounding-box hidden" style="position: absolute;"></div>
+            </div>
+            
           </div>
           <div class="video-controls" style="margin-top: 10px;">
             <button id="startDetection" class="btn btn--primary" style="display:inline-block;">
@@ -108,7 +112,6 @@
         </div>
       </div>
 
-      <!-- Upload & Analyze Tab -->
       <div class="tab-content" id="upload-tab">
         <div class="upload-section">
           <div class="upload-container">
@@ -126,7 +129,6 @@
               </div>
             </div>
 
-            <!-- File Queue -->
             <div id="fileQueue" class="file-queue hidden">
               <h4>Upload Queue</h4>
               <div id="queueList" class="queue-list"></div>
@@ -136,7 +138,6 @@
               </div>
             </div>
 
-            <!-- Analysis Progress -->
             <div id="analysisProgress" class="analysis-progress hidden">
               <div class="progress-header">
                 <h4>Analysis in Progress</h4>
@@ -151,7 +152,6 @@
         </div>
       </div>
 
-      <!-- Detection Log Section -->
       <div class="log-section">
         <div class="section-header">
           <h2>Detection Log</h2>
@@ -194,7 +194,6 @@
     </main>
   </div>
 
-  <!-- Settings Modal -->
   <div class="modal hidden" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <div class="modal-content">
